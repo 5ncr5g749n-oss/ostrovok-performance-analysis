@@ -1,0 +1,5 @@
+{
+  "redirects": [
+    { "source": "/", "destination": "/ostrovok/intro-test", "permanent": false }
+  ]
+}
