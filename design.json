@@ -1,0 +1,414 @@
+{
+  "meta": {
+    "name": "Soft Glass Analytics UI",
+    "version": "1.0.0",
+    "intent": "Гайдлайн для ИИ и команды по воспроизведению визуального стиля дашборда из референса.",
+    "styleKeywords": [
+      "clean",
+      "airy",
+      "soft-glass",
+      "modern-saas",
+      "calm-neumorphism-hints",
+      "high-legibility"
+    ],
+    "doNotCopyLiterally": true
+  },
+  "designPrinciples": [
+    "Сначала читаемость: визуальная иерархия строится на контрасте размера и веса шрифта, а не на агрессивном цвете.",
+    "Максимум воздуха: крупные внешние отступы, мягкие внутренние паддинги, низкая плотность интерфейса.",
+    "Мягкая геометрия: везде скругления, тонкие границы и деликатные тени без резких контуров.",
+    "Фокус на спокойной аналитике: акцентный цвет один, все остальное нейтрально и сдержанно.",
+    "Компоненты должны выглядеть так, будто они лежат на светлой поверхности, а не парят отдельно.",
+    "Сигналы статуса вторичны по насыщенности: зелёный, красный, жёлтый используются в малых дозах."
+  ],
+  "structure": {
+    "appShell": {
+      "background": {
+        "type": "radial-soft-gradient",
+        "base": "#F6F8FF",
+        "haloTopLeft": "#EAF0FF",
+        "haloBottom": "#C9D8FF"
+      },
+      "mainSurface": {
+        "fill": "#FFFFFF",
+        "radius": 24,
+        "border": "1px solid #ECEFF5",
+        "shadow": "0 20px 50px rgba(89, 106, 168, 0.12)"
+      },
+      "layout": {
+        "type": "sidebar-plus-content",
+        "sidebarWidth": 72,
+        "contentMaxWidth": 1280,
+        "contentPadding": 28,
+        "sectionGap": 18
+      }
+    },
+    "gridSystem": {
+      "type": "12-column",
+      "columnGap": 20,
+      "cardRowBehavior": "3 columns on desktop, 2 on tablet, 1 on mobile",
+      "contentFlow": "header -> tabs -> KPI cards -> data panel"
+    },
+    "spacingScale": {
+      "unit": 4,
+      "tokens": {
+        "2xs": 4,
+        "xs": 8,
+        "sm": 12,
+        "md": 16,
+        "lg": 20,
+        "xl": 24,
+        "2xl": 32,
+        "3xl": 40
+      },
+      "rules": [
+        "Внутренний паддинг карточек: 20-24px.",
+        "Расстояние между крупными блоками: 16-24px.",
+        "Интерактивные элементы в строке: 8-12px."
+      ]
+    }
+  },
+  "colorSystem": {
+    "neutrals": {
+      "bgCanvas": "#F6F8FF",
+      "bgSurface": "#FFFFFF",
+      "bgSubtle": "#F9FAFD",
+      "borderSoft": "#E9EDF4",
+      "borderDefault": "#DCE2EC",
+      "textPrimary": "#1E2433",
+      "textSecondary": "#6C7489",
+      "textMuted": "#9AA3B5",
+      "iconDefault": "#7A849A"
+    },
+    "brand": {
+      "primary500": "#5B4DFF",
+      "primary600": "#4E42E6",
+      "primary100": "#E7E4FF",
+      "primaryGlow": "rgba(91, 77, 255, 0.25)"
+    },
+    "semantic": {
+      "success": "#27AE60",
+      "successSoft": "#EAF9F0",
+      "danger": "#E35D77",
+      "dangerSoft": "#FDEEF2",
+      "warning": "#D9B84A",
+      "warningSoft": "#FFF8E6",
+      "info": "#6A7BFF",
+      "infoSoft": "#EEF1FF"
+    },
+    "usageRules": [
+      "Основной акцентный цвет применяется для главных CTA, активных табов и прогресс-баров.",
+      "Для таблиц и карточек использовать белый фон и очень светлые границы.",
+      "Семантические цвета применять как метки/бейджи и микросигналы, а не как фон целых секций."
+    ]
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Inter, ui-sans-serif, -apple-system, Segoe UI, Roboto, sans-serif"
+    },
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "scale": {
+      "display": {
+        "size": 36,
+        "lineHeight": 1.2,
+        "weight": 700
+      },
+      "h1": {
+        "size": 40,
+        "lineHeight": 1.1,
+        "weight": 700
+      },
+      "h2": {
+        "size": 32,
+        "lineHeight": 1.2,
+        "weight": 700
+      },
+      "h3": {
+        "size": 24,
+        "lineHeight": 1.25,
+        "weight": 600
+      },
+      "sectionTitle": {
+        "size": 28,
+        "lineHeight": 1.25,
+        "weight": 700
+      },
+      "cardMetric": {
+        "size": 44,
+        "lineHeight": 1.1,
+        "weight": 700
+      },
+      "body": {
+        "size": 14,
+        "lineHeight": 1.5,
+        "weight": 400
+      },
+      "bodyStrong": {
+        "size": 14,
+        "lineHeight": 1.45,
+        "weight": 600
+      },
+      "caption": {
+        "size": 12,
+        "lineHeight": 1.4,
+        "weight": 500
+      }
+    },
+    "rules": [
+      "Заголовки темнее и тяжелее, вспомогательный текст всегда на 1-2 уровня светлее.",
+      "Числовые KPI визуально доминируют и всегда имеют самый высокий контраст.",
+      "Для табов и кнопок использовать medium/semibold без лишнего трекинга."
+    ]
+  },
+  "radiusAndDepth": {
+    "radiusTokens": {
+      "sm": 8,
+      "md": 12,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24,
+      "pill": 999
+    },
+    "shadowTokens": {
+      "softInset": "inset 0 1px 0 rgba(255, 255, 255, 0.65)",
+      "card": "0 6px 18px rgba(36, 44, 72, 0.08)",
+      "panel": "0 12px 28px rgba(60, 76, 130, 0.10)",
+      "elevated": "0 16px 36px rgba(56, 70, 119, 0.14)"
+    },
+    "borderRule": "1px solid #E9EDF4 почти для всех surface-компонентов"
+  },
+  "componentGuidelines": {
+    "sidebar": {
+      "style": "узкая вертикальная панель с иконками, светлая, с разделением по уровням важности",
+      "container": {
+        "width": 72,
+        "paddingY": 20,
+        "iconGap": 20
+      },
+      "item": {
+        "size": 36,
+        "radius": 12,
+        "iconSize": 18,
+        "defaultColor": "#6F7991",
+        "activeState": {
+          "fill": "#EEF1FF",
+          "iconColor": "#5B4DFF"
+        }
+      }
+    },
+    "topBar": {
+      "style": "тонкая системная полоса с адресом и действиями, минималистичная",
+      "height": 56,
+      "divider": "1px solid #EEF2F7"
+    },
+    "pageHeader": {
+      "titleStyle": "sectionTitle",
+      "actionsAlign": "right",
+      "actionPrimary": "filled purple pill button",
+      "avatar": {
+        "size": 34,
+        "shape": "circle",
+        "onlineDot": true
+      }
+    },
+    "tabs": {
+      "variant": "underline-minimal",
+      "height": 34,
+      "textStyle": "caption",
+      "inactiveColor": "#7B849B",
+      "activeColor": "#222A3B",
+      "activeIndicator": {
+        "position": "bottom",
+        "thickness": 2,
+        "color": "#5B4DFF",
+        "radius": 2
+      }
+    },
+    "kpiCard": {
+      "container": {
+        "radius": 16,
+        "padding": 20,
+        "background": "#FFFFFF",
+        "border": "1px solid #E8ECF3",
+        "shadow": "0 8px 18px rgba(42, 53, 84, 0.08)"
+      },
+      "iconBadge": {
+        "size": 28,
+        "radius": 14,
+        "background": "#F2F4FF",
+        "iconColor": "#6E6AF8"
+      },
+      "labelStyle": "caption",
+      "valueStyle": "cardMetric",
+      "deltaStyle": {
+        "positiveColor": "#27AE60",
+        "negativeColor": "#E35D77",
+        "textSize": 12
+      },
+      "menuAction": "kebab icon top-right"
+    },
+    "panel": {
+      "container": {
+        "radius": 16,
+        "padding": 16,
+        "background": "#FFFFFF",
+        "border": "1px solid #E9EDF4"
+      },
+      "header": {
+        "titleStyle": "bodyStrong",
+        "subtitleStyle": "caption",
+        "actions": "filter button + primary add button"
+      }
+    },
+    "buttons": {
+      "base": {
+        "height": 36,
+        "paddingX": 14,
+        "radius": 999,
+        "font": "12-13px / 600"
+      },
+      "primary": {
+        "fill": "#5B4DFF",
+        "text": "#FFFFFF",
+        "hoverFill": "#4E42E6",
+        "shadow": "0 6px 16px rgba(91, 77, 255, 0.26)"
+      },
+      "secondary": {
+        "fill": "#FFFFFF",
+        "text": "#4A536A",
+        "border": "1px solid #E2E7F0",
+        "hoverFill": "#F8FAFE"
+      },
+      "iconButton": {
+        "size": 32,
+        "radius": 999,
+        "fill": "#FFFFFF",
+        "border": "1px solid #E4E9F2"
+      }
+    },
+    "inputsAndFilters": {
+      "fieldHeight": 36,
+      "radius": 999,
+      "background": "#FFFFFF",
+      "border": "1px solid #E2E7F0",
+      "textColor": "#4F5870",
+      "placeholderColor": "#9AA3B5",
+      "iconColor": "#8A94AB",
+      "focusState": {
+        "borderColor": "#B4ABFF",
+        "ring": "0 0 0 3px rgba(91, 77, 255, 0.14)"
+      }
+    },
+    "table": {
+      "container": {
+        "background": "#FFFFFF",
+        "radius": 12,
+        "border": "1px solid #E9EDF4"
+      },
+      "header": {
+        "height": 44,
+        "background": "#FAFBFE",
+        "textStyle": "caption",
+        "textColor": "#667089",
+        "separator": "1px solid #EDF1F6"
+      },
+      "row": {
+        "height": 58,
+        "background": "#FFFFFF",
+        "hoverBackground": "#FAFCFF",
+        "separator": "1px solid #F0F3F8"
+      },
+      "content": {
+        "primaryText": "#2B3246",
+        "secondaryText": "#97A0B3"
+      }
+    },
+    "progress": {
+      "track": "#EEF1F7",
+      "fill": "#5B4DFF",
+      "height": 8,
+      "radius": 999
+    },
+    "badge": {
+      "size": {
+        "height": 22,
+        "paddingX": 10
+      },
+      "radius": 999,
+      "font": "12px / 500",
+      "variants": {
+        "success": {
+          "bg": "#EAF9F0",
+          "text": "#27AE60"
+        },
+        "danger": {
+          "bg": "#FDEEF2",
+          "text": "#E35D77"
+        },
+        "warning": {
+          "bg": "#FFF8E6",
+          "text": "#C7A43B"
+        },
+        "info": {
+          "bg": "#EEF1FF",
+          "text": "#6170F4"
+        }
+      }
+    },
+    "avatars": {
+      "single": {
+        "size": 28,
+        "border": "2px solid #FFFFFF"
+      },
+      "stack": {
+        "overlap": -8,
+        "maxVisible": 6
+      }
+    }
+  },
+  "interactionAndMotion": {
+    "durationsMs": {
+      "fast": 120,
+      "normal": 180,
+      "slow": 260
+    },
+    "easing": {
+      "standard": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+      "exit": "cubic-bezier(0.4, 0, 1, 1)"
+    },
+    "hover": [
+      "Карточки и кнопки слегка усиливают тень и/или меняют тон на 3-6%.",
+      "Табличные строки подсвечиваются очень мягким нейтральным фоном."
+    ],
+    "focus": [
+      "У всех интерактивных элементов обязательный видимый focus-ring.",
+      "Ring всегда строится на primary с низкой непрозрачностью."
+    ]
+  },
+  "responsiveGuidelines": {
+    "breakpoints": {
+      "sm": 640,
+      "md": 768,
+      "lg": 1024,
+      "xl": 1280
+    },
+    "rules": [
+      "На <=1024px KPI-карточки переходят с 3 колонок на 2.",
+      "На <=768px правая зона действий в хедере переносится под заголовок.",
+      "На мобильных таблица сворачивается в карточки строк с 2-3 ключевыми полями."
+    ]
+  },
+  "aiReplicationChecklist": [
+    "Использовать белые surface-контейнеры с мягкими границами и крупными скруглениями.",
+    "Держать интерфейс очень светлым, с одним фиолетовым акцентом.",
+    "Соблюдать крупные отступы и низкую визуальную плотность.",
+    "KPI показывать большими жирными цифрами с маленьким контекстом изменения.",
+    "Контролы фильтрации делать пилл-формы с тонкой обводкой и иконкой слева.",
+    "Таблицы строить на тонких разделителях, с лёгким hover, без тяжёлой сетки."
+  ]
+}

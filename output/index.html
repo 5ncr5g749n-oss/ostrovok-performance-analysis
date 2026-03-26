@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ostrovok Performance Marketing — Аналитический отчёт</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F6F8FF;
+    --surface: #FFFFFF;
+    --border: #E9EDF4;
+    --text: #1E2433;
+    --text-sec: #6C7489;
+    --text-muted: #9AA3B5;
+    --accent: #5B4DFF;
+    --accent-light: #E7E4FF;
+    --success: #27AE60;
+    --success-bg: #EAF9F0;
+    --danger: #E35D77;
+    --danger-bg: #FDEEF2;
+    --warning: #D9B84A;
+    --warning-bg: #FFF8E6;
+    --info: #6A7BFF;
+    --info-bg: #EEF1FF;
+    --card-shadow: 0 8px 18px rgba(42,53,84,0.08);
+    --font: 'Inter', ui-sans-serif, -apple-system, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    background: radial-gradient(ellipse at 0% 0%, #EAF0FF 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, #C9D8FF 0%, transparent 50%),
+                #F6F8FF;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #1E2433;
+    border-bottom: none;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    box-shadow: 0 2px 12px rgba(30,36,51,0.18);
+  }
+  nav a {
+    text-decoration: none;
+    color: rgba(255,255,255,0.55);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 16px 22px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  nav a:hover { color: rgba(255,255,255,0.9); }
+  nav a.active { color: #fff; border-bottom-color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  .section { padding: 60px 0; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #1E2433 0%, #2D3655 60%, #3A4578 100%);
+    padding: 64px 0 56px;
+    color: #fff;
+  }
+  .hero-title { font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+  .hero-sub { font-size: 15px; color: rgba(255,255,255,0.55); margin-bottom: 44px; }
+  .hero-updated {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.78);
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 999px;
+    padding: 6px 10px;
+    margin-bottom: 14px;
+  }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .kpi-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 24px 20px;
+    backdrop-filter: blur(6px);
+  }
+  .kpi-value { font-size: 40px; font-weight: 700; line-height: 1.1; color: #fff; margin-bottom: 4px; }
+  .kpi-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .kpi-sub { font-size: 12px; color: rgba(255,255,255,0.38); }
+
+  /* ── SECTION TITLE ── */
+  .section-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .section-sub { font-size: 14px; color: var(--text-sec); margin-bottom: 32px; }
+  .h3 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 4px solid;
+  }
+  .callout-danger { background: var(--danger-bg); border-color: var(--danger); color: #7a1f2e; }
+  .callout-success { background: var(--success-bg); border-color: var(--success); color: #145c35; }
+  .callout-warning { background: var(--warning-bg); border-color: var(--warning); color: #7a5e15; }
+  .callout-info { background: var(--info-bg); border-color: var(--info); color: #2d3a8c; }
+
+  /* ── TWO-COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  /* ── TABLE ── */
+  .tbl-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); }
+  thead th {
+    background: #FAFBFE;
+    color: #667089;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #EDF1F6;
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid #F0F3F8; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #FAFCFF; }
+  tbody td { padding: 13px 16px; font-size: 13px; color: #2B3246; }
+  tbody td.muted { color: var(--text-muted); }
+  .row-danger { background: #FDEEF2 !important; }
+  .row-success { background: #EAF9F0 !important; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-success { background: var(--success-bg); color: var(--success); }
+  .badge-danger { background: var(--danger-bg); color: var(--danger); }
+  .badge-warning { background: var(--warning-bg); color: #C7A43B; }
+  .badge-info { background: var(--info-bg); color: #6170F4; }
+
+  /* ── ACCORDION ── */
+  .accordion { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .accordion-header:hover { background: #FAFBFE; }
+  .accordion-arrow { transition: transform 0.2s; font-size: 16px; color: var(--text-muted); }
+  .accordion-body { display: none; }
+  .accordion.open .accordion-body { display: block; }
+  .accordion.open .accordion-arrow { transform: rotate(180deg); }
+
+  /* ── CHART CONTAINER ── */
+  .chart-box { width: 100%; min-height: 320px; }
+
+  /* ── RANKING BAR ── */
+  .ranking {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: var(--card-shadow);
+  }
+  .ranking-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid #F0F3F8;
+  }
+  .ranking-row:last-child { border-bottom: none; }
+  .ranking-num { font-size: 13px; font-weight: 700; color: var(--text-muted); width: 20px; }
+  .ranking-channel { font-size: 14px; font-weight: 600; min-width: 100px; }
+  .ranking-bar-wrap { flex: 1; height: 8px; background: #EEF1F7; border-radius: 999px; overflow: hidden; }
+  .ranking-bar { height: 100%; border-radius: 999px; }
+  .ranking-scores { font-size: 12px; color: var(--text-sec); min-width: 140px; text-align: right; }
+
+  /* ── Q&A BLOCKS ── */
+  .qa-block { margin-bottom: 40px; }
+  .qa-question {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text);
+    padding-left: 16px;
+    border-left: 3px solid var(--accent);
+  }
+  .qa-answer { }
+
+  /* ── CARDS GRID ── */
+  .cards-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+  .mini-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(42,53,84,0.05);
+  }
+  .mini-card-icon { font-size: 20px; margin-bottom: 8px; }
+  .mini-card-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .mini-card-desc { font-size: 12px; color: var(--text-sec); }
+
+  /* ── NUMBERED LIST ── */
+  .num-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .num-item {
+    display: flex;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(42,53,84,0.04);
+  }
+  .num-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .num-text { font-size: 13px; }
+  .num-text strong { font-weight: 600; display: block; margin-bottom: 2px; }
+  .num-text span { color: var(--text-sec); font-size: 12px; }
+
+  /* ── NO DATA BOX ── */
+  .info-box {
+    background: #F9FAFD;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--text-sec);
+    margin-top: 16px;
+  }
+  .info-box ul { padding-left: 18px; margin-top: 8px; }
+  .info-box li { margin-bottom: 4px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    text-align: center;
+  }
+  footer p { font-size: 12px; color: var(--text-muted); line-height: 1.8; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .three-col { grid-template-columns: 1fr 1fr; }
+    .cards-grid-2 { grid-template-columns: 1fr; }
+    .num-list { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .three-col { grid-template-columns: 1fr; }
+    .hero-title { font-size: 26px; }
+    .kpi-value { font-size: 28px; }
+    .section-title { font-size: 22px; }
+    nav a { padding: 14px 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAVIGATION ══ -->
+<nav id="main-nav">
+  <a href="#overview" class="nav-link">Обзор</a>
+  <a href="#quality" class="nav-link">Качество</a>
+  <a href="#dynamics" class="nav-link">Динамика</a>
+  <a href="#ltv" class="nav-link">LTV</a>
+  <a href="#strategy" class="nav-link">Стратегия</a>
+  <a href="#glossary" class="nav-link">Словарь</a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-title">Ostrovok Performance Marketing</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:6px;font-weight:500;">Тестовое задание · Якубов Марк</div>
+    <div class="hero-updated">Обновлено в Cursor · 25.03.2026</div>
+    <div class="hero-sub">Анализ 1 427 414 сессий · Январь–Июнь 2017</div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Сессий</div>
+        <div class="kpi-value">1.4M</div>
+        <div class="kpi-sub">за 6 месяцев</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Бронирований</div>
+        <div class="kpi-value">19 761</div>
+        <div class="kpi-sub">уникальных</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Net комиссия</div>
+        <div class="kpi-value">$495K</div>
+        <div class="kpi-sub">с учётом отмен</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Средний CR</div>
+        <div class="kpi-value">1.38%</div>
+        <div class="kpi-sub">по всем каналам</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ВВЕДЕНИЕ ══ -->
+<div style="background:var(--accent-light);border-bottom:2px solid rgba(91,77,255,0.2);">
+  <div class="container" style="padding-top:20px;padding-bottom:20px;">
+    <p style="font-size:14px;color:#3a2fb0;line-height:1.7;">
+      Разделы отчёта идут в том же порядке, что вопросы в задании: структура трафика → качество → динамика → LTV → стратегия.
+      Чтобы не было разночтений в терминах и моделях атрибуции —
+      <a href="#glossary" style="color:var(--accent);text-decoration:none;font-weight:600;border-bottom:1px solid rgba(91,77,255,0.4);">в конце добавлен словарь с формулами</a>.
+    </p>
+  </div>
+</div>
+
+<!-- ══ СЕКЦИЯ 1: ОБЗОР ══ -->
+<section id="overview" class="section">
+  <div class="container">
+    <div class="section-title">Структура трафика</div>
+    <div class="section-sub">Распределение сессий и доходность по каналам</div>
+
+    <div class="two-col">
+      <!-- Donut chart -->
+      <div class="card">
+        <div class="h3">Распределение сессий по каналам</div>
+        <div id="chart-donut" class="chart-box" style="min-height:300px;"></div>
+      </div>
+
+      <!-- Channel table -->
+      <div class="card">
+        <div class="h3">Доходность каналов</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Канал</th>
+                <th>Сессии</th>
+                <th>CR</th>
+                <th>Доля выручки</th>
+                <th>RPS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-info">brand</span></td>
+                <td>545 799</td>
+                <td><strong>2.71%</strong></td>
+                <td><strong>75.1%</strong></td>
+                <td>$1.37</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-success">metasearch</span></td>
+                <td>175 058</td>
+                <td>1.97%</td>
+                <td>17.2%</td>
+                <td>$0.98</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-warning">partners</span></td>
+                <td>53 537</td>
+                <td>1.04%</td>
+                <td>2.8%</td>
+                <td>$0.51</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-info" style="background:#EEF1FF;color:#6A7BFF;">seo</span></td>
+                <td>78 931</td>
+                <td>0.45%</td>
+                <td>1.8%</td>
+                <td>$0.22</td>
+              </tr>
+              <tr class="row-danger">
+                <td><span class="badge badge-danger">cpc</span></td>
+                <td>574 089</td>
+                <td>0.11%</td>
+                <td>3.2%</td>
+                <td>$0.055</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ СЕКЦИЯ 2: КАЧЕСТВО ══ -->
+<section id="quality" class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="section-title">Качество трафика</div>
+    <div class="section-sub">Revenue per session и эффективность субканалов</div>
+
+    <div class="callout callout-danger">
+      CPC — 40% трафика, 3.2% выручки. CR в 25 раз ниже brand. <span style="opacity:0.7;font-weight:400;">Для точной оценки качества нужно получить данные по цене сессии и посчитать ROMI, но при отсутствии этих данных пока опираемся на RPS.</span>
+    </div>
+
+    <!-- RPS horizontal bar -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="h3">Revenue Per Session — сколько выручки приносит одна сессия</div>
+      <div id="chart-rps" class="chart-box" style="min-height:280px;"></div>
+    </div>
+
+    <!-- Accordion -->
+    <div class="accordion" id="accordion-sub">
+      <div class="accordion-header" onclick="toggleAccordion('accordion-sub')">
+        <span>Субканалы — развернуть</span>
+        <span class="accordion-arrow">▾</span>
+      </div>
+      <div class="accordion-body">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Субканал</th>
+                <th>Канал</th>
+                <th>Сессии</th>
+                <th>CR</th>
+                <th>RPS</th>
+                <th>Avg net LTV</th>
+                <th>Median net LTV</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-success">
+                <td><strong>gotravelunl</strong> <span class="badge badge-success">Топ CR</span></td>
+                <td>metasearch</td>
+                <td>21 108</td>
+                <td><strong>7.42%</strong></td>
+                <td>$1.86</td>
+                <td>$26.36</td>
+                <td>$20.37</td>
+              </tr>
+              <tr>
+                <td>vital</td>
+                <td>brand</td>
+                <td>110 626</td>
+                <td>4.66%</td>
+                <td>$1.18</td>
+                <td><strong>$35.04</strong></td>
+                <td>$23.08</td>
+              </tr>
+              <tr>
+                <td>type-in</td>
+                <td>brand</td>
+                <td>360 784</td>
+                <td>2.29%</td>
+                <td>$0.58</td>
+                <td>$32.85</td>
+                <td>$21.99</td>
+              </tr>
+              <tr>
+                <td>email</td>
+                <td>brand</td>
+                <td>68 343</td>
+                <td>1.98%</td>
+                <td>$0.50</td>
+                <td>$29.17</td>
+                <td>$21.51</td>
+              </tr>
+              <tr>
+                <td>hc</td>
+                <td>metasearch</td>
+                <td>59 894</td>
+                <td>1.82%</td>
+                <td>$0.43</td>
+                <td>$24.36</td>
+                <td>$18.54</td>
+              </tr>
+              <tr>
+                <td>cpa-affiliate</td>
+                <td>partners</td>
+                <td>53 537</td>
+                <td>1.04%</td>
+                <td>$0.25</td>
+                <td>$33.58</td>
+                <td>$21.58</td>
+              </tr>
+              <tr>
+                <td>trivago</td>
+                <td>metasearch</td>
+                <td>94 015</td>
+                <td>0.84%</td>
+                <td>$0.21</td>
+                <td>$25.37</td>
+                <td>$18.33</td>
+              </tr>
+              <tr>
+                <td>yandex</td>
+                <td>seo</td>
+                <td>78 931</td>
+                <td>0.45%</td>
+                <td>$0.11</td>
+                <td>$27.47</td>
+                <td>$20.69</td>
+              </tr>
+              <tr>
+                <td>retargeting</td>
+                <td>cpc</td>
+                <td>3 034</td>
+                <td>0.33%</td>
+                <td class="muted">—</td>
+                <td>$18.74</td>
+                <td>$13.14</td>
+              </tr>
+              <tr class="row-danger">
+                <td><strong>sem</strong></td>
+                <td>cpc</td>
+                <td>571 055</td>
+                <td>0.11%</td>
+                <td>$0.027</td>
+                <td>$25.27</td>
+                <td>$18.89</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-success">
+      gotravelunl: CR 7.42% — лучший субканал в датасете. В 3.8× выше среднего по metasearch.
+    </div>
+
+    <!-- Per-channel subchannels -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+
+      <!-- Brand -->
+      <div class="accordion" id="acc-brand">
+        <div class="accordion-header" onclick="toggleAccordion('acc-brand')">
+          <span><span class="badge badge-info" style="margin-right:8px;">brand</span>Субканалы</span>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Субканал</th><th>Сессии</th><th>CR</th><th>RPS</th></tr></thead>
+              <tbody>
+                <tr><td><strong>vital</strong></td><td>110 626</td><td><strong>4.66%</strong></td><td>$1.18</td></tr>
+                <tr><td>type-in</td><td>360 784</td><td>2.29%</td><td>$0.58</td></tr>
+                <tr><td>email</td><td>68 343</td><td>1.98%</td><td>$0.50</td></tr>
+                <tr class="row-danger"><td>smm</td><td>6 046</td><td>0.40%</td><td>$0.07</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metasearch -->
+      <div class="accordion" id="acc-metasearch">
+        <div class="accordion-header" onclick="toggleAccordion('acc-metasearch')">
+          <span><span class="badge badge-success" style="margin-right:8px;">metasearch</span>Субканалы</span>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Субканал</th><th>Сессии</th><th>CR</th><th>RPS</th></tr></thead>
+              <tbody>
+                <tr class="row-success"><td><strong>gotravelunl</strong> <span class="badge badge-success">Топ CR</span></td><td>21 108</td><td><strong>7.42%</strong></td><td>$1.86</td></tr>
+                <tr><td>hc</td><td>59 894</td><td>1.82%</td><td>$0.43</td></tr>
+                <tr><td>trivago</td><td>94 015</td><td>0.84%</td><td>$0.21</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CPC -->
+      <div class="accordion" id="acc-cpc">
+        <div class="accordion-header" onclick="toggleAccordion('acc-cpc')">
+          <span><span class="badge badge-danger" style="margin-right:8px;">cpc</span>Субканалы</span>
+          <span class="accordion-arrow">▾</span>
+        </div>
+        <div class="accordion-body">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Субканал</th><th>Сессии</th><th>CR</th><th>RPS</th></tr></thead>
+              <tbody>
+                <tr><td>retargeting</td><td>3 034</td><td>0.33%</td><td class="muted">—</td></tr>
+                <tr class="row-danger"><td><strong>sem</strong></td><td>571 055</td><td>0.11%</td><td>$0.027</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- Device chart -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="h3">CR и объём сессий по устройствам</div>
+      <div id="chart-devices" class="chart-box" style="min-height:300px;"></div>
+      <div class="callout callout-info" style="margin-top:20px;margin-bottom:0;">
+        Mobile конвертирует лучше PC — 1.71% vs 1.31% <span style="opacity:0.7;font-weight:400;">На первый взгляд кажется, что мобильная версия сайта работает лучше десктопной, но для проверки нужно посмотреть каждый тип устройств в разрезе каналов. Это и проверим на следующем графике.</span>
+      </div>
+    </div>
+
+    <!-- Device × Channel breakdown -->
+    <div class="card">
+      <div class="h3">Состав трафика по каналам внутри каждого устройства</div>
+      <div style="font-size:13px;color:var(--text-sec);margin-bottom:20px;">Доля сессий канала от всего трафика устройства</div>
+      <div id="chart-device-channels" class="chart-box" style="min-height:300px;"></div>
+      <div class="callout callout-warning" style="margin-top:20px;margin-bottom:0;">
+        На mobile — 53.7% brand и лишь 19.3% cpc. На PC — наоборот: 48.3% cpc и 32.7% brand. Разница в CR объясняется прежде всего составом трафика, а не качеством мобильной версии. <span style="opacity:0.7;font-weight:400;">Ниже — сравнение CR одних и тех же каналов в рамках разных устройств. Фактически мобильная посадка конвертит значительно хуже веба.</span>
+      </div>
+      <div class="tbl-wrap" style="margin-top:20px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Устройство</th>
+              <th>Канал</th>
+              <th>Сессии</th>
+              <th>Доля на устройстве</th>
+              <th>CR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td rowspan="5" style="font-weight:600;vertical-align:top;padding-top:16px;">Mobile</td><td><span class="badge badge-info">brand</span></td><td>215 365</td><td><strong>53.7%</strong></td><td>2.36%</td></tr>
+            <tr><td><span class="badge badge-danger">cpc</span></td><td>77 561</td><td>19.3%</td><td>0.07%</td></tr>
+            <tr><td><span class="badge badge-success">metasearch</span></td><td>70 628</td><td>17.6%</td><td>2.29%</td></tr>
+            <tr><td><span class="badge badge-info" style="background:#EEF1FF;color:#6A7BFF;">seo</span></td><td>20 155</td><td>5.0%</td><td>0.26%</td></tr>
+            <tr style="border-bottom:2px solid #E9EDF4;"><td><span class="badge badge-warning">partners</span></td><td>17 478</td><td>4.4%</td><td>0.31%</td></tr>
+            <tr><td rowspan="5" style="font-weight:600;vertical-align:top;padding-top:16px;">PC</td><td><span class="badge badge-danger">cpc</span></td><td>447 301</td><td><strong>48.3%</strong></td><td>0.12%</td></tr>
+            <tr><td><span class="badge badge-info">brand</span></td><td>302 918</td><td>32.7%</td><td>3.03%</td></tr>
+            <tr><td><span class="badge badge-success">metasearch</span></td><td>91 302</td><td>9.9%</td><td>1.81%</td></tr>
+            <tr><td><span class="badge badge-info" style="background:#EEF1FF;color:#6A7BFF;">seo</span></td><td>51 964</td><td>5.6%</td><td>0.53%</td></tr>
+            <tr style="border-bottom:2px solid #E9EDF4;"><td><span class="badge badge-warning">partners</span></td><td>32 843</td><td>3.5%</td><td>1.48%</td></tr>
+            <tr><td rowspan="5" style="font-weight:600;vertical-align:top;padding-top:16px;">Tablet</td><td><span class="badge badge-danger">cpc</span></td><td>49 227</td><td><strong>49.3%</strong></td><td>0.05%</td></tr>
+            <tr><td><span class="badge badge-info">brand</span></td><td>27 516</td><td>27.5%</td><td>1.82%</td></tr>
+            <tr><td><span class="badge badge-success">metasearch</span></td><td>13 128</td><td>13.1%</td><td>1.38%</td></tr>
+            <tr><td><span class="badge badge-info" style="background:#EEF1FF;color:#6A7BFF;">seo</span></td><td>6 812</td><td>6.8%</td><td>0.34%</td></tr>
+            <tr><td><span class="badge badge-warning">partners</span></td><td>3 216</td><td>3.2%</td><td>0.40%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ СЕКЦИЯ 3: ДИНАМИКА ══ -->
+<section id="dynamics" class="section">
+  <div class="container">
+    <div class="section-title">Динамика</div>
+    <div class="section-sub">Retention по каналам и недельная динамика сессий и CR</div>
+
+    <!-- Retention heatmap -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="h3">Session retention по каналам — доля вернувшихся пользователей</div>
+      <div id="chart-retention" class="chart-box" style="min-height:320px;"></div>
+    </div>
+
+    <!-- Order retention heatmap -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="h3">Order retention по каналам — доля покупателей, сделавших повторное бронирование</div>
+      <div id="chart-order-retention" class="chart-box" style="min-height:320px;"></div>
+      <div class="callout callout-danger" style="margin-top:20px;margin-bottom:16px;">
+        CPC: session retention 2.2% в M1, order retention 0.16%. Пользователи возвращаются на сайт, но почти никогда не бронируют повторно — разрыв в 14×.
+      </div>
+      <div class="callout callout-warning" style="margin-bottom:0;">
+        Metasearch: session retention 3.1%, order retention 1.11% — лишь треть возвратов заканчивается покупкой. Brand: сессионный и покупательский retention почти совпадают — кто возвращается, тот и бронирует.
+      </div>
+    </div>
+
+    <!-- Weekly dual-axis -->
+    <div class="card">
+      <div class="h3">Сессии и CR по неделям — январь–июнь 2017</div>
+      <div id="chart-weekly" class="chart-box" style="min-height:340px;"></div>
+      <div class="callout callout-warning" style="margin-top:20px;margin-bottom:0;">
+        <strong>Гипотеза:</strong> пик трафика приходится на июнь, но CR в этот период падает — тогда как март–май дают наилучшую конверсию. Возможно, имеет смысл смещать бюджетные пики на весенний сезон, а не наращивать трафик в июне. Требует проверки: нужны данные по spend и сезонности спроса за несколько лет.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ СЕКЦИЯ 4: LTV ══ -->
+<section id="ltv" class="section">
+  <div class="container">
+    <div class="section-title">Q: Как оценить качество трафика в разрезе когорт?</div>
+    <div class="section-sub">LTV и качество пользователей по каналу первого привлечения</div>
+
+    <div class="callout callout-info">
+      Первое бронирование одинаково у всех каналов (~$24–25 net). Вся разница в LTV — только через повторные покупки.
+    </div>
+
+    <!-- Bubble chart -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="h3">CR × Repeat rate по каналам (размер пузыря = объём трафика)</div>
+      <div id="chart-bubble" class="chart-box" style="min-height:380px;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;">
+        <div class="callout callout-success" style="margin-bottom:0;">
+          <strong>Лучшие каналы — brand и partners.</strong> Оба в правом верхнем квадранте: высокий CR и высокий repeat rate. Brand — лидер по обоим показателям и по объёму. Partners неожиданно близко к brand по retention (9.8% vs 12.2%) при CPA-модели оплаты.
+        </div>
+        <div class="callout callout-danger" style="margin-bottom:0;">
+          <strong>Худший — cpc.</strong> Самый большой пузырь, но левый нижний угол: CR 0.11%, repeat rate 1.4%. Огромный объём трафика не конвертируется и не возвращается. Metasearch — в середине: конверсия есть, но лояльности нет.
+        </div>
+      </div>
+    </div>
+
+    <!-- LTV table -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="h3">LTV по каналу первого привлечения</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Канал</th>
+              <th>Покупателей</th>
+              <th>Доля с повторной покупкой</th>
+              <th>Avg net LTV</th>
+              <th>Median net LTV</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge badge-info">brand</span></td>
+              <td>11 230</td>
+              <td>12.2%</td>
+              <td>$33.15</td>
+              <td>$22.32</td>
+            </tr>
+            <tr class="row-success">
+              <td><span class="badge badge-warning">partners</span> <span class="badge badge-success">Неожиданно высокий retention</span></td>
+              <td>409</td>
+              <td>9.8%</td>
+              <td>$33.58</td>
+              <td>$21.58</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-info" style="background:#EEF1FF;color:#6A7BFF;">seo</span></td>
+              <td>321</td>
+              <td>4.7%</td>
+              <td>$27.47</td>
+              <td>$20.69</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-success">metasearch</span></td>
+              <td>3 326</td>
+              <td>3.2%</td>
+              <td>$25.49</td>
+              <td>$19.16</td>
+            </tr>
+            <tr class="row-danger">
+              <td><span class="badge badge-danger">cpc</span></td>
+              <td>624</td>
+              <td>1.4%</td>
+              <td>$25.18</td>
+              <td>$18.72</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout callout-warning">
+      Partners: repeat rate 9.8% — почти как brand. CPA-модель: платим только за состоявшееся бронирование. <span style="opacity:0.7;font-weight:400;">Partners выглядит как топ-кандидат на масштабирование по этим метрикам, но для финального решения нужно получить стоимостные метрики (CPA) по всем каналам.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ СЕКЦИЯ 5: СТРАТЕГИЯ ══ -->
+<section id="strategy" class="section">
+  <div class="container">
+    <div class="section-title">Стратегия</div>
+    <div class="section-sub">Ответы на вопросы тестового задания</div>
+
+    <!-- Q1 -->
+    <div class="qa-block">
+      <div class="qa-question">Q1: Каких данных критически не хватает?</div>
+      <div class="qa-answer">
+        <div class="cards-grid-2">
+          <div class="mini-card">
+            <div class="mini-card-icon">💰</div>
+            <div class="mini-card-title">Стоимость трафика (spend)</div>
+            <div class="mini-card-desc">Главный недостаток датасета. Без стоимостных показателей невозможно принимать никакие решения</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-icon">🔍</div>
+            <div class="mini-card-title">Микроконверсии</div>
+            <div class="mini-card-desc">Бронирование без оплаты, переход на выбор даты и т.д. Позволят оценить точки отвала и искать их причины</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-icon">🗺️</div>
+            <div class="mini-card-title">Параметры поиска</div>
+            <div class="mini-card-desc">Destination, даты, кол-во гостей — сегментация по намерению</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-icon">📅</div>
+            <div class="mini-card-title">История до периода</div>
+            <div class="mini-card-desc">Новый ли пользователь в январе или returning — чистота когортного анализа</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-icon">🏨</div>
+            <div class="mini-card-title">Тип бронирования</div>
+            <div class="mini-card-desc">Сегмент отеля, направление — для понимания ценности аудитории канала</div>
+          </div>
+        </div>
+        <div class="info-box">
+          <strong>Как действовать без данных:</strong>
+          <ul>
+            <li>Использовать RPS как прокси доходности канала</li>
+            <li>Ранжировать по CR + repeat rate — два независимых сигнала качества</li>
+            <li>Ориентироваться на LTV как показатель долгосрочной доходности. Более высокий LTV позволяет окупаться при более высоком CPA</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="qa-block">
+      <div class="qa-question">Q2: Атрибуция и Customer Journey</div>
+      <div class="qa-answer">
+        <div class="two-col" style="margin-bottom:20px;">
+          <div class="card">
+            <div class="h3">Сравнение моделей атрибуции</div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Канал</th>
+                    <th>Last paid</th>
+                    <th>Last-click</th>
+                    <th>Linear</th>
+                    <th>Time decay</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge badge-info">brand</span></td>
+                    <td>69.3%</td>
+                    <td>71.1%</td>
+                    <td>71.0%</td>
+                    <td>71.0%</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-success">metasearch</span></td>
+                    <td>21.7%</td>
+                    <td>20.6%</td>
+                    <td>20.6%</td>
+                    <td>20.6%</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-danger">cpc</span></td>
+                    <td>4.5%</td>
+                    <td>3.9%</td>
+                    <td>4.0%</td>
+                    <td>4.0%</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-warning">partners</span></td>
+                    <td>2.7%</td>
+                    <td>2.5%</td>
+                    <td>2.4%</td>
+                    <td>2.4%</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge-info" style="background:#EEF1FF;color:#6A7BFF;">seo</span></td>
+                    <td>1.8%</td>
+                    <td>2.0%</td>
+                    <td>2.0%</td>
+                    <td>2.0%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="callout callout-warning" style="margin-top:16px;margin-bottom:0;">
+              Last paid — единственная модель с заметным расхождением. Системно занижает brand (−1.8 пп) и seo (−0.2 пп), завышает metasearch (+1.1 пп) и cpc (+0.6 пп, рост на 15%). Механика понятна: last paid игнорирует органику и direct, отдавая кредит последнему платному касанию — то есть каналам, за которые платишь. Три остальные модели дают практически идентичный результат: пути слишком короткие, чтобы выбор модели имел значение.
+            </div>
+          </div>
+          <div>
+            <div class="h3">Методы оценки верхнеуровневых каналов</div>
+            <div class="num-list" style="grid-template-columns:1fr;">
+              <div class="num-item">
+                <div class="num-circle">1</div>
+                <div class="num-text">
+                  <strong>Geo-holdout тест</strong>
+                  <span>Отключить brand в тестовых регионах — измерить реальный инкремент. Альтернатива — тест почасовым миганием</span>
+                </div>
+              </div>
+              <div class="num-item">
+                <div class="num-circle">2</div>
+                <div class="num-text">
+                  <strong>Post-purchase survey</strong>
+                  <span>"Как впервые узнали об Ostrovok?" — прямой сигнал brand awareness</span>
+                </div>
+              </div>
+              <div class="num-item">
+                <div class="num-circle">3</div>
+                <div class="num-text">
+                  <strong>View-through attribution</strong>
+                  <span>Конверсии от показов, не кликов — важно для медийки</span>
+                </div>
+              </div>
+              <div class="num-item">
+                <div class="num-circle">4</div>
+                <div class="num-text">
+                  <strong>Data-Driven attribution</strong>
+                  <span>При 10k+ конверсий/мес платформы дают алгоритмическую модель</span>
+                </div>
+              </div>
+              <div class="num-item">
+                <div class="num-circle">5</div>
+                <div class="num-text">
+                  <strong>Эконометрические оценки</strong>
+                  <span>Оценить корреляции показателей медийки (показы, охваты) с трафиком и конверсиями других каналов (главным образом brand и SEO)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="qa-block">
+      <div class="qa-question">Q3: Ранжирование каналов по качеству</div>
+      <div class="qa-answer">
+        <div class="ranking">
+          <div style="font-size:13px;color:var(--text-sec);margin-bottom:20px;">По трём метрикам из данных: CR + Repeat rate + Net LTV</div>
+          <div class="ranking-row">
+            <div class="ranking-num">1</div>
+            <div class="ranking-channel" style="color:#5B4DFF;">brand</div>
+            <div class="ranking-bar-wrap"><div class="ranking-bar" style="width:100%;background:#5B4DFF;"></div></div>
+            <div class="ranking-scores">CR 2.71% · Repeat 12.2% · LTV $33</div>
+          </div>
+          <div class="ranking-row">
+            <div class="ranking-num">1</div>
+            <div class="ranking-channel" style="color:#F59E0B;">partners</div>
+            <div class="ranking-bar-wrap"><div class="ranking-bar" style="width:97%;background:#F59E0B;"></div></div>
+            <div class="ranking-scores">CR 1.04% · Repeat 9.8% · LTV $34 <span class="badge badge-success" style="margin-left:4px;">CPA</span></div>
+          </div>
+          <div class="ranking-row">
+            <div class="ranking-num">3</div>
+            <div class="ranking-channel" style="color:#6A7BFF;">seo</div>
+            <div class="ranking-bar-wrap"><div class="ranking-bar" style="width:62%;background:#6A7BFF;"></div></div>
+            <div class="ranking-scores">CR 0.45% · Repeat 4.7% · LTV $27</div>
+          </div>
+          <div class="ranking-row">
+            <div class="ranking-num">4</div>
+            <div class="ranking-channel" style="color:#27AE60;">metasearch</div>
+            <div class="ranking-bar-wrap"><div class="ranking-bar" style="width:52%;background:#27AE60;"></div></div>
+            <div class="ranking-scores">CR 1.97% · Repeat 3.2% · LTV $25</div>
+          </div>
+          <div class="ranking-row">
+            <div class="ranking-num">5</div>
+            <div class="ranking-channel" style="color:#E35D77;">cpc</div>
+            <div class="ranking-bar-wrap"><div class="ranking-bar" style="width:12%;background:#E35D77;"></div></div>
+            <div class="ranking-scores">CR 0.11% · Repeat 1.4% · LTV $25</div>
+          </div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-sec);">
+            <strong style="color:var(--text);">brand ≈ partners &nbsp;&gt;&gt;&nbsp; seo &nbsp;&gt;&nbsp; metasearch &nbsp;&gt;&gt;&nbsp; cpc</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="qa-block">
+      <div class="qa-question">Q4: Куда вложить $100 000</div>
+      <div class="qa-answer">
+        <div class="callout callout-warning" style="margin-bottom:24px;">
+          <strong>Важная оговорка.</strong> В данных нет стоимостных показателей (spend, CPA, CPM) и нет понимания текущей ёмкости каналов. В реальной практике рекомендации о распределении бюджета без этих данных невозможны. Приведённое ниже распределение — аналитическое упражнение на основе CR, RPS, LTV и repeat rate, но не операционное решение.
+        </div>
+        <div class="card" style="margin-bottom:20px;">
+          <div class="h3" style="margin-bottom:6px;">Масштабируемые каналы — приоритет заливки бюджетом</div>
+          <div style="font-size:13px;color:var(--text-sec);margin-bottom:20px;">Исключены неуправляемые через бюджет каналы: SEO yandex, type-in, email</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Субканал</th>
+                  <th>Канал</th>
+                  <th>RPS</th>
+                  <th>CR</th>
+                  <th>Repeat rate</th>
+                  <th>Median LTV</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="row-success">
+                  <td><strong>1</strong></td>
+                  <td><strong>gotravelunl</strong></td>
+                  <td><span class="badge badge-success">metasearch</span></td>
+                  <td><strong>$1.86</strong></td>
+                  <td>7.42%</td>
+                  <td>4.4%</td>
+                  <td>$20.37</td>
+                </tr>
+                <tr>
+                  <td><strong>2</strong></td>
+                  <td>vital</td>
+                  <td><span class="badge badge-info">brand</span></td>
+                  <td><strong>$1.18</strong></td>
+                  <td>4.66%</td>
+                  <td><strong>13.3%</strong></td>
+                  <td>$23.08</td>
+                </tr>
+                <tr>
+                  <td><strong>3</strong></td>
+                  <td>hc</td>
+                  <td><span class="badge badge-success">metasearch</span></td>
+                  <td>$0.43</td>
+                  <td>1.82%</td>
+                  <td>2.6%</td>
+                  <td>$18.54</td>
+                </tr>
+                <tr>
+                  <td><strong>4</strong></td>
+                  <td>cpa-affiliate</td>
+                  <td><span class="badge badge-warning">partners</span></td>
+                  <td>$0.25</td>
+                  <td>1.04%</td>
+                  <td><strong>9.8%</strong></td>
+                  <td>$21.58</td>
+                </tr>
+                <tr>
+                  <td><strong>5</strong></td>
+                  <td>trivago</td>
+                  <td><span class="badge badge-success">metasearch</span></td>
+                  <td>$0.21</td>
+                  <td>0.84%</td>
+                  <td>1.4%</td>
+                  <td>$18.33</td>
+                </tr>
+                <tr>
+                  <td><strong>6</strong></td>
+                  <td>smm</td>
+                  <td><span class="badge badge-info">brand</span></td>
+                  <td>$0.07</td>
+                  <td>0.40%</td>
+                  <td>4.2%</td>
+                  <td>$15.18</td>
+                </tr>
+                <tr class="row-danger">
+                  <td><strong>7</strong></td>
+                  <td>retargeting</td>
+                  <td><span class="badge badge-danger">cpc</span></td>
+                  <td>$0.056</td>
+                  <td>0.33%</td>
+                  <td>0.0%</td>
+                  <td>$13.14</td>
+                </tr>
+                <tr class="row-danger">
+                  <td><strong>8</strong></td>
+                  <td>sem</td>
+                  <td><span class="badge badge-danger">cpc</span></td>
+                  <td>$0.027</td>
+                  <td>0.11%</td>
+                  <td>1.5%</td>
+                  <td>$18.89</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-bottom:20px;">
+          Каналы отранжированы по RPS — прямому прокси доходности сессии без данных по расходам. Repeat rate показан отдельно как второе измерение качества. Логика заливки бюджетом: сверху вниз, в соответствии с потенциальной ёмкостью каждого канала — до насыщения переходим к следующему.
+        </div>
+
+        <div class="info-box" style="background:#F9FAFD;">
+          <strong style="color:var(--text);">Исключены из таблицы — не масштабируются бюджетом:</strong>
+          <ul>
+            <li><strong>type-in, yandex (seo)</strong> — органический трафик, прямые заходы</li>
+            <li><strong>email</strong> — работает на существующей базе, почти не зависит от бюджета, поэтому не рассматривается как инструмент масштабирования. Если есть ёмкость — заливать надо, но чаще всего на практике дополнительной быстрой ёмкости в деньгах почти нет</li>
+            <li><strong>SEO-канал</strong> — долгосрочная инвестиция, не реагирует на увеличение бюджета в моменте</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ СЛОВАРЬ ══ -->
+<section id="glossary" class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="section-title">Словарь терминов</div>
+    <div class="section-sub">Метрики, модели атрибуции и когортные понятия, используемые в отчёте</div>
+
+    <!-- Метрики эффективности -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="h3" style="margin-bottom:20px;">Метрики эффективности</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:160px;">Термин</th><th style="width:120px;">Расшифровка</th><th>Как считается / что значит</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>CR</strong></td>
+              <td class="muted">Conversion Rate</td>
+              <td>Бронирования / Сессии × 100%. Доля сессий, завершившихся бронированием</td>
+            </tr>
+            <tr>
+              <td><strong>RPS</strong></td>
+              <td class="muted">Revenue Per Session</td>
+              <td>Net комиссия / Сессии. Сколько чистой выручки приносит одна сессия канала</td>
+            </tr>
+            <tr>
+              <td><strong>LTV</strong></td>
+              <td class="muted">Lifetime Value</td>
+              <td>Суммарная чистая выручка от одного пользователя за весь период. Здесь: avg net commission × (1 + retention M1 + M2 + … + M5)</td>
+            </tr>
+            <tr>
+              <td><strong>CPA</strong></td>
+              <td class="muted">Cost Per Acquisition</td>
+              <td>Стоимость привлечения одного покупателя. В датасете нет данных по расходам — не считался</td>
+            </tr>
+            <tr>
+              <td><strong>ROAS</strong></td>
+              <td class="muted">Return on Ad Spend</td>
+              <td>Выручка / Рекламные затраты. Не считался — нет данных по spend</td>
+            </tr>
+            <tr>
+              <td><strong>Net комиссия</strong></td>
+              <td class="muted">Чистая комиссия</td>
+              <td><code style="background:#F2F4FF;padding:2px 6px;border-radius:4px;font-size:12px;">commission_usd × (1 − cancellation_prediction)</code> — ожидаемая выручка с поправкой на риск отмены</td>
+            </tr>
+            <tr>
+              <td><strong>Gross комиссия</strong></td>
+              <td class="muted">Валовая комиссия</td>
+              <td>commission_usd без поправки на отмены</td>
+            </tr>
+            <tr>
+              <td><strong>Repeat rate</strong></td>
+              <td class="muted">Доля повторных покупок</td>
+              <td>% покупателей канала, совершивших хотя бы 2 бронирования за наблюдаемый период</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Атрибуция -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="h3" style="margin-bottom:20px;">Атрибуция</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:200px;">Модель / термин</th><th>Что значит</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Last-click</strong></td>
+              <td>100% кредита — последней сессии перед бронированием, независимо от канала</td>
+            </tr>
+            <tr>
+              <td><strong>Last paid</strong></td>
+              <td>100% кредита — последнему <em>платному</em> каналу в пути. Органика и direct игнорируются — brand и SEO системно занижены</td>
+            </tr>
+            <tr>
+              <td><strong>Linear</strong></td>
+              <td>Кредит делится поровну между всеми касаниями в пути до конверсии</td>
+            </tr>
+            <tr>
+              <td><strong>Time decay</strong></td>
+              <td>Кредит распределяется с нарастающим весом в пользу более поздних касаний</td>
+            </tr>
+            <tr>
+              <td><strong>Assist rate</strong></td>
+              <td>Доля конверсионных путей, где канал встречался, но не был последним. SEO assist rate 20% — присутствует в каждой пятой конверсии, но кредит по last-click не получает</td>
+            </tr>
+            <tr>
+              <td><strong>Incrementality test</strong></td>
+              <td>Geo-holdout эксперимент: отключить канал в тестовых регионах и измерить реальные потери в бронированиях — единственный способ измерить инкрементальный вклад</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Когортный анализ -->
+    <div class="card">
+      <div class="h3" style="margin-bottom:20px;">Когортный анализ</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:200px;">Термин</th><th>Что значит</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Когорта</strong></td>
+              <td>Группа пользователей, привлечённых в одном месяце. Когорты позволяют сравнивать поведение пользователей с учётом «возраста» — сколько прошло с момента привлечения</td>
+            </tr>
+            <tr>
+              <td><strong>Retention M1, M2…</strong></td>
+              <td>Доля пользователей из когорты, вернувшихся через 1, 2… месяцев после первого визита</td>
+            </tr>
+            <tr>
+              <td><strong>Session retention</strong></td>
+              <td>Доля вернувшихся <em>на сайт</em> — не обязательно с бронированием. Отличается от repeat rate</td>
+            </tr>
+            <tr>
+              <td><strong>Repeat rate</strong></td>
+              <td>Доля пользователей, совершивших повторное <em>бронирование</em>. Более жёсткий сигнал лояльности, чем session retention</td>
+            </tr>
+            <tr>
+              <td><strong>Browsing ≠ покупка</strong></td>
+              <td>Возврат на сайт (session retention) не равен повторному бронированию. Metasearch возвращает пользователей чаще partners, но повторных покупок у partners в 3× больше</td>
+            </tr>
+            <tr>
+              <td><strong>cancellation_prediction</strong></td>
+              <td>Модельная вероятность отмены для каждого бронирования (0–1). Используется для расчёта net комиссии. Чем выше — тем рискованнее бронирование с точки зрения выручки</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container">
+    <p>Все цифры получены непосредственно из датасета. Внешние бенчмарки не использовались.</p>
+    <p>1 427 414 сессий · Python pandas · Период: январь–июнь 2017</p>
+  </div>
+</footer>
+
+<script>
+  // ── ACCORDION ──
+  function toggleAccordion(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+
+  // ── ACTIVE NAV ──
+  const sections = ['overview','quality','dynamics','ltv','strategy','glossary'];
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  function updateNav() {
+    let current = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 100) current = id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  // ── CHANNEL COLORS ──
+  const CH = {
+    brand:      '#5B4DFF',
+    metasearch: '#27AE60',
+    cpc:        '#E35D77',
+    partners:   '#F59E0B',
+    seo:        '#6A7BFF'
+  };
+
+  const PLT_CFG = { responsive: true, displayModeBar: false };
+  const PLT_LAYOUT_BASE = {
+    font: { family: 'Inter, sans-serif', size: 12, color: '#6C7489' },
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor:  'rgba(0,0,0,0)',
+    margin: { t: 20, r: 20, b: 40, l: 40 }
+  };
+
+  // ── 1. DONUT ──
+  (function() {
+    const data = [{
+      type: 'pie',
+      hole: 0.6,
+      values: [574089, 545799, 175058, 78931, 53537],
+      labels: ['cpc','brand','metasearch','seo','partners'],
+      marker: { colors: [CH.cpc, CH.brand, CH.metasearch, CH.seo, CH.partners] },
+      textinfo: 'label+percent',
+      hovertemplate: '<b>%{label}</b><br>%{value:,} сессий<br>%{percent}<extra></extra>',
+      textfont: { size: 12 }
+    }];
+    const layout = Object.assign({}, PLT_LAYOUT_BASE, {
+      margin: { t: 10, r: 10, b: 10, l: 10 },
+      showlegend: false,
+      annotations: [{
+        text: '<b>1.4M</b><br>сессий',
+        x: 0.5, y: 0.5,
+        font: { size: 14, color: '#1E2433' },
+        showarrow: false,
+        xanchor: 'center', yanchor: 'middle'
+      }]
+    });
+    Plotly.newPlot('chart-donut', data, layout, PLT_CFG);
+  })();
+
+  // ── 2. RPS HORIZONTAL BAR ──
+  (function() {
+    const channels = ['cpc','seo','partners','metasearch','brand'];
+    const rps      = [0.055, 0.22, 0.51, 0.98, 1.37];
+    const colors   = channels.map(c => CH[c]);
+    const data = [{
+      type: 'bar',
+      orientation: 'h',
+      y: channels,
+      x: rps,
+      marker: { color: colors },
+      text: rps.map(v => '$' + v),
+      textposition: 'outside',
+      hovertemplate: '<b>%{y}</b><br>RPS: $%{x}<extra></extra>',
+      cliponaxis: false
+    }];
+    const layout = Object.assign({}, PLT_LAYOUT_BASE, {
+      margin: { t: 10, r: 80, b: 40, l: 100 },
+      xaxis: { title: 'Revenue Per Session ($)', gridcolor: '#F0F3F8', zeroline: false },
+      yaxis: { automargin: true }
+    });
+    Plotly.newPlot('chart-rps', data, layout, PLT_CFG);
+  })();
+
+  // ── 3. DEVICES GROUPED BAR ──
+  (function() {
+    const devices = ['PC','Mobile','Tablet'];
+    const sessions = [926328, 401187, 99899];
+    const cr       = [1.31, 1.71, 0.74];
+
+    const trace1 = {
+      name: 'Сессии',
+      type: 'bar',
+      x: devices,
+      y: sessions,
+      yaxis: 'y',
+      marker: { color: '#E7E4FF' },
+      hovertemplate: '<b>%{x}</b><br>Сессии: %{y:,}<extra></extra>'
+    };
+    const trace2 = {
+      name: 'CR %',
+      type: 'scatter',
+      mode: 'lines+markers',
+      x: devices,
+      y: cr,
+      yaxis: 'y2',
+      line: { color: '#5B4DFF', width: 3 },
+      marker: { size: 8, color: '#5B4DFF' },
+      hovertemplate: '<b>%{x}</b><br>CR: %{y}%<extra></extra>'
+    };
+    const layout = Object.assign({}, PLT_LAYOUT_BASE, {
+      margin: { t: 10, r: 60, b: 40, l: 80 },
+      legend: { x: 0.7, y: 1 },
+      yaxis:  { title: 'Сессии', gridcolor: '#F0F3F8', tickformat: ',.0f' },
+      yaxis2: { title: 'CR %', overlaying: 'y', side: 'right', tickformat: '.2f', gridcolor: 'transparent' }
+    });
+    Plotly.newPlot('chart-devices', [trace1, trace2], layout, PLT_CFG);
+  })();
+
+  // ── 3b. DEVICE × CHANNEL STACKED BAR ──
+  (function() {
+    const devices = ['Mobile', 'PC', 'Tablet'];
+
+    // Доли каналов по устройствам (%)
+    const data_share = {
+      brand:      [53.7, 32.7, 27.5],
+      metasearch: [17.6,  9.9, 13.1],
+      cpc:        [19.3, 48.3, 49.3],
+      partners:   [ 4.4,  3.5,  3.2],
+      seo:        [ 5.0,  5.6,  6.8]
+    };
+    // CR по устройство × канал для hover
+    const data_cr = {
+      brand:      [2.36, 3.03, 1.82],
+      metasearch: [2.29, 1.81, 1.38],
+      cpc:        [0.07, 0.12, 0.05],
+      partners:   [0.31, 1.48, 0.40],
+      seo:        [0.26, 0.53, 0.34]
+    };
+
+    const channels = ['brand','cpc','metasearch','partners','seo'];
+    const traces = channels.map(ch => ({
+      name: ch,
+      type: 'bar',
+      orientation: 'h',
+      x: data_share[ch],
+      y: devices,
+      marker: { color: CH[ch] },
+      customdata: data_cr[ch].map((cr, i) => `CR ${cr}%`),
+      hovertemplate: `<b>${ch}</b><br>Доля: %{x}%<br>%{customdata}<extra></extra>`,
+      texttemplate: data_share[ch].map(v => v >= 8 ? v + '%' : ''),
+      textposition: 'inside',
+      insidetextanchor: 'middle',
+      textfont: { size: 12, color: '#fff' }
+    }));
+
+    const layout = Object.assign({}, PLT_LAYOUT_BASE, {
+      barmode: 'stack',
+      height: 220,
+      margin: { t: 10, r: 20, b: 40, l: 70 },
+      legend: { orientation: 'h', x: 0, y: -0.25, font: { size: 12 } },
+      xaxis: { title: 'Доля сессий, %', range: [0, 100], gridcolor: '#F0F3F8', ticksuffix: '%' },
+      yaxis: { automargin: true, tickfont: { size: 13 } }
+    });
+    Plotly.newPlot('chart-device-channels', traces, layout, PLT_CFG);
+  })();
+
+  // ── 4. RETENTION HEATMAP ──
+  (function() {
+    const z = [
+      [5.4, 3.6, 3.0, 2.8, 2.9],
+      [3.1, 1.6, 1.1, 0.9, 0.9],
+      [2.3, 1.1, 0.9, 0.7, 0.6],
+      [2.2, 1.1, 0.8, 0.6, 0.5],
+      [2.1, 0.9, 0.7, 0.5, 0.5]
+    ];
+    const data = [{
+      type: 'heatmap',
+      z: z,
+      x: ['M1','M2','M3','M4','M5'],
+      y: ['brand','metasearch','partners','cpc','seo'],
+      colorscale: [[0,'#F9FAFD'],[0.3,'#E7E4FF'],[0.7,'#9B8FFF'],[1,'#5B4DFF']],
+      showscale: true,
+      hoverongaps: false,
+      hovertemplate: '<b>%{y}</b> %{x}<br>Retention: %{z}%<extra></extra>',
+      text: z.map(row => row.map(v => v + '%')),
+      texttemplate: '%{text}',
+      textfont: { size: 12 }
+    }];
+    const layout = Object.assign({}, PLT_LAYOUT_BASE, {
+      margin: { t: 10, r: 80, b: 40, l: 100 },
+      xaxis: { title: 'Месяц после первого визита' },
+      yaxis: { automargin: true }
+    });
+    Plotly.newPlot('chart-retention', data, layout, PLT_CFG);
+  })();
+
+  // ── 4b. ORDER RETENTION HEATMAP ──
+  (function() {
+    const z = [
+      [5.89, 3.68, 2.39, 1.33, 0.82],
+      [5.64, 1.23, 1.23, 1.72, 0.49],
+      [1.55, 1.24, 0.93, 0.00, 0.00],
+      [1.11, 0.45, 0.21, 0.06, 0.03],
+      [0.16, 0.00, 0.16, 0.16, 0.00]
+    ];
+    const data = [{
+      type: 'heatmap',
+      z: z,
+      x: ['M1','M2','M3','M4','M5'],
+      y: ['brand','partners','seo','metasearch','cpc'],
+      colorscale: [[0,'#F9FAFD'],[0.3,'#E7E4FF'],[0.7,'#9B8FFF'],[1,'#5B4DFF']],
+      showscale: true,
+      hovertemplate: '<b>%{y}</b> %{x}<br>Order retention: %{z}%<extra></extra>',
+      text: z.map(row => row.map(v => v > 0 ? v + '%' : '—')),
+      texttemplate: '%{text}',
+      textfont: { size: 12 }
+    }];
+    const layout = Object.assign({}, PLT_LAYOUT_BASE, {
+      margin: { t: 10, r: 80, b: 40, l: 100 },
+      xaxis: { title: 'Месяц после первого бронирования' },
+      yaxis: { automargin: true }
+    });
+    Plotly.newPlot('chart-order-retention', data, layout, PLT_CFG);
+  })();
+
+  // ── 5. WEEKLY DUAL-AXIS ──
+  (function() {
+    // ISO-даты → Plotly воспринимает как временную ось
+    const dates    = ["2016-12-26","2017-01-02","2017-01-09","2017-01-16","2017-01-23","2017-01-30","2017-02-06","2017-02-13","2017-02-20","2017-02-27","2017-03-06","2017-03-13","2017-03-20","2017-03-27","2017-04-03","2017-04-10","2017-04-17","2017-04-24","2017-05-01","2017-05-08","2017-05-15","2017-05-22","2017-05-29","2017-06-05","2017-06-12","2017-06-19","2017-06-26"];
+    const labels   = ["26.12","02.01","09.01","16.01","23.01","30.01","06.02","13.02","20.02","27.02","06.03","13.03","20.03","27.03","03.04","10.04","17.04","24.04","01.05","08.05","15.05","22.05","29.05","05.06","12.06","19.06","26.06"];
+    const sessions = [5580,41540,50372,57430,61631,59019,55210,52852,47395,54100,54037,55963,55381,51336,50977,51705,51745,50400,49595,53070,55586,55346,61276,65256,62998,68316,49298];
+    const cr       = [1.13,1.19,1.36,1.25,1.20,1.27,1.30,1.39,1.58,1.44,1.39,1.40,1.58,1.62,1.67,1.52,1.68,1.62,1.29,1.43,1.40,1.39,1.40,1.31,1.13,1.10,1.29];
+
+    const barColors = sessions.map((_, i) => i === 0 ? '#E8E4FF' : '#C8C2FF');
+
+    const trace1 = {
+      name: 'Сессии',
+      type: 'bar',
+      x: dates,
+      y: sessions,
+      yaxis: 'y',
+      marker: { color: barColors },
+      customdata: labels,
+      hovertemplate: '<b>Неделя %{customdata}</b><br>Сессии: %{y:,}<extra></extra>'
+    };
+    const trace2 = {
+      name: 'CR %',
+      type: 'scatter',
+      mode: 'lines',
+      x: dates,
+      y: cr,
+      yaxis: 'y2',
+      line: { color: '#5B4DFF', width: 2.5, shape: 'spline', smoothing: 0.4 },
+      customdata: labels,
+      hovertemplate: '<b>Неделя %{customdata}</b><br>CR: %{y}%<extra></extra>'
+    };
+
+    const layout = Object.assign({}, PLT_LAYOUT_BASE, {
+      height: 380,
+      margin: { t: 40, r: 70, b: 50, l: 75 },
+      bargap: 0.1,
+      legend: { x: 0, y: 1.1, orientation: 'h', font: { size: 12 } },
+      xaxis: {
+        type: 'date',
+        dtick: 'M1',
+        tickformat: '%B',
+        tickfont: { size: 13, color: '#4A536A' },
+        gridcolor: 'transparent',
+        zeroline: false
+      },
+      yaxis: {
+        title: { text: 'Сессий в неделю', font: { size: 12 }, standoff: 8 },
+        gridcolor: '#F0F3F8',
+        tickformat: ',.0f',
+        tickfont: { size: 11 },
+        rangemode: 'tozero'
+      },
+      yaxis2: {
+        title: { text: 'CR, %', font: { size: 12 }, standoff: 8 },
+        overlaying: 'y',
+        side: 'right',
+        tickformat: '.1f',
+        ticksuffix: '%',
+        tickfont: { size: 11 },
+        gridcolor: 'transparent',
+        range: [0.7, 2.1]
+      },
+      shapes: [
+        { type: 'rect', xref: 'x', yref: 'paper',
+          x0: '2017-04-03', x1: '2017-04-17', y0: 0, y1: 1,
+          fillcolor: 'rgba(91,77,255,0.07)', line: { width: 0 } }
+      ],
+      annotations: [
+        { xref: 'x', yref: 'y2',
+          x: '2017-04-10', y: 1.95,
+          text: '↑ Пик CR<br>предлетний сезон',
+          showarrow: false,
+          font: { size: 11, color: '#5B4DFF' },
+          xanchor: 'center', yanchor: 'top',
+          bgcolor: 'rgba(255,255,255,0.9)', borderpad: 4 },
+        { xref: 'x', yref: 'y2',
+          x: '2017-06-19', y: 0.85,
+          text: '↓ CR падает<br>при росте трафика',
+          showarrow: false,
+          font: { size: 11, color: '#E35D77' },
+          xanchor: 'right', yanchor: 'bottom',
+          bgcolor: 'rgba(255,255,255,0.9)', borderpad: 4 }
+      ]
+    });
+    Plotly.newPlot('chart-weekly', [trace1, trace2], layout, PLT_CFG);
+  })();
+
+  // ── 6. BUBBLE CHART ──
+  (function() {
+    const channels    = ['brand','partners','metasearch','seo','cpc'];
+    const cr          = [2.71, 1.04, 1.97, 0.45, 0.11];
+    const repeat      = [12.2, 9.8, 3.2, 4.7, 1.4];
+    const sessions    = [545799, 53537, 175058, 78931, 574089];
+    const colors      = channels.map(c => CH[c]);
+    const sizes       = sessions.map(s => Math.sqrt(s / 574089) * 60 + 15);
+
+    const data = [{
+      type: 'scatter',
+      mode: 'markers+text',
+      x: cr,
+      y: repeat,
+      text: channels,
+      textposition: 'top center',
+      textfont: { size: 12, color: '#1E2433' },
+      marker: { size: sizes, color: colors, opacity: 0.85, line: { width: 2, color: '#fff' } },
+      hovertemplate: '<b>%{text}</b><br>CR: %{x}%<br>Repeat rate: %{y}%<extra></extra>'
+    }];
+
+    const layout = Object.assign({}, PLT_LAYOUT_BASE, {
+      margin: { t: 30, r: 40, b: 60, l: 70 },
+      xaxis: { title: 'CR (%)', gridcolor: '#F0F3F8', zeroline: false },
+      yaxis: { title: 'Repeat rate (%)', gridcolor: '#F0F3F8', zeroline: false },
+      shapes: [
+        { type: 'line', x0: 1, x1: 1, y0: 0, y1: 14, line: { color: '#DCE2EC', dash: 'dot', width: 1 } },
+        { type: 'line', x0: 0, x1: 3.2, y0: 5, y1: 5, line: { color: '#DCE2EC', dash: 'dot', width: 1 } }
+      ],
+      annotations: [
+        { x: 1, y: 0.5, text: 'CR = 1%', showarrow: false, font: { size: 10, color: '#9AA3B5' }, xanchor: 'left' },
+        { x: 3.1, y: 5, text: 'Repeat = 5%', showarrow: false, font: { size: 10, color: '#9AA3B5' }, yanchor: 'bottom', xanchor: 'right' }
+      ]
+    });
+    Plotly.newPlot('chart-bubble', data, layout, PLT_CFG);
+  })();
+
+
+</script>
+</body>
+</html>
